@@ -4,17 +4,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 import './style.css';
 
 class App extends Component {
-  state = {
-    name: ''
-  }
-  handleChange = (e) => {
-    const name = e.target.value
-    this.setState({ name })
-  }
-  handleSubmit = (e) => {
-    e.preventDefault()
-    window.location.href = `/films?directorName=${this.state.name}`
-  }
+  
   render() {
     return <Router>
       <div>
@@ -27,20 +17,40 @@ class App extends Component {
            Note we use <div> below for display purposes only.
           */}
 
-        <form id="input-form" className="director-name-input-box">
-          <input id="input-box" className="director-name-input-box" placeholder="Enter director name" onChange={(e) => this.handleChange(e)}
-            value={this.state.name}
-          />
-          <button type="submit" onClick={(e) => this.handleSubmit(e)} className="submit-button" >SUBMIT</button>
-        </form>
+        <Route path="/" component={Form}/>
 
 
 
-        <Route exact path='/films' render={(props) => <Films {...props} />} />
+        <Route exact path='/films' component={Films}/> 
       </div>
     </Router>
   }
 
+}
+
+class Form extends React.Component{
+  state = {
+    name: ''
+  }
+  handleChange = (e) => {
+    const name = e.target.value
+    this.setState({ name })
+  }
+  handleSubmit = (e) => {
+    e.preventDefault()
+    this.props.history.push(`/films?directorName=${this.state.name}`)
+  }
+  render(){
+    return(
+      <form id="input-form" >
+          <input id="input-box" className="director-name-input-box" placeholder="Enter director name" onChange={(e) => this.handleChange(e)}
+            value={this.state.name}
+          />
+          
+          <button type="submit" onClick={(e) => this.handleSubmit(e)} className="submit-button" >SUBMIT</button>
+        </form>
+    )
+  }
 }
 
 export default App;

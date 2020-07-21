@@ -24,7 +24,7 @@ export default class Films extends Component {
       }
     })
       .then((response) => {
-        console.log(response)
+        console.log(response.data)
         this.setState({ filmsByDirectorName: response.data })
       })
       .catch((err) => {
@@ -75,6 +75,7 @@ export default class Films extends Component {
     * If the given list of films is empty, this method should return "N/A".
   */
   getBestRatedFilm(films) {
+    if(films.length>0){
     let lowest = -Infinity
     let name = ''
     for (let i = 0; i < films.length; i++) {
@@ -84,8 +85,11 @@ export default class Films extends Component {
       }
     }
     return name
-
   }
+  else{
+    return 'N/A'
+  }
+}
 
   /**
     * Retrieves the length of the film which has the longest running time from the given list of films.
@@ -95,15 +99,32 @@ export default class Films extends Component {
     * For example, if the duration of the longest film is 120, this function should return "120 mins".
   */
   getLongestFilm(films) {
-    return 176.12
+    if(films.length>0){
+    let lowest = -Infinity
+    for (let i = 0; i < films.length; i++) {
+      if (films[i].length > lowest) {
+        lowest = films[i].length
+      }
+    }
+    return `${lowest} mins`
   }
-
+  else{
+    return 'N/A'
+  }
+  }
   /**
     * Retrieves the average rating for the films from the given list of films, rounded to 1 decimal place.
     * If the given list of films is empty, this method should return 0.
   */
   getAverageRating(films) {
-    return 4.5
+    if(films.length>0){
+      let initalvalue =0
+      const totalRating =films.reduce((acc,b)=>{
+        return acc+b.rating},initalvalue)
+      return (totalRating/films.length).toFixed(1)
+    }else{
+      return 0
+    }
   }
 
   /**
@@ -141,7 +162,32 @@ export default class Films extends Component {
     * then this method should return 147, as Prestige was released 147 days after Batman Begins.
   */
   getShortestNumberOfDaysBetweenFilmReleases(films) {
-    return 30
+    if(films.length===1){
+      return 0
+    }
+    const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+   const dateDiffInDays=(a,b)=>{
+    const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+    const utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+    return Math.abs( Math.floor((utc2 - utc1) / _MS_PER_DAY));
+    }
+    if(films.length>0){
+      let shortestDays=Infinity
+      for(let i =0;i<films.length;i++){
+        for(let j =i+1;j<films.length;j++){
+          const a = new Date(films[i].releaseDate)
+           const b = new Date(films[j].releaseDate)
+            const difference =  dateDiffInDays(a, b);
+            if(difference<shortestDays){
+              shortestDays=difference
+            }
+            difference=0
+        }
+      }
+      return shortestDays
+    }else{
+      return 'N/A'
+    }
   }
 
 }
