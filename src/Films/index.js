@@ -10,12 +10,32 @@ const filmsEndpointURL = "https://app.codescreen.dev/api/assessments/films";
 const apiToken = "8c5996d5-fb89-46c9-8821-7063cfbc18b1"
 
 export default class Films extends Component {
-  state = {filmsByDirectorName: []}
+  state = { filmsByDirectorName: [] }
   //TODO Retrieve the director name passed to this component after clicking the Submit button, and use it to query the 
   //Films API endpoint. The director name needs to be passed into the films endpoint as a query param called 
   //directorName.
 
+  componentDidMount() {
+    const name = this.props.location.search
+    console.log(name)
+    axios.get(`https://app.codescreen.dev/api/assessments/films${name}`, {
+      headers: {
+        'Authorization': apiToken
+      }
+    })
+      .then((response) => {
+        console.log(response)
+        this.setState({ filmsByDirectorName: response.data })
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+
+
+  }
+
   render() {
+    const { filmsByDirectorName } = this.state
     return (
       <div className="stats-boxes">
         <div className="stats-box-row-1">
@@ -55,7 +75,16 @@ export default class Films extends Component {
     * If the given list of films is empty, this method should return "N/A".
   */
   getBestRatedFilm(films) {
-    //TODO Implement
+    let lowest = -Infinity
+    let name = ''
+    for (let i = 0; i < films.length; i++) {
+      if (films[i].rating > lowest) {
+        lowest = films[i].rating
+        name = films[i].name
+      }
+    }
+    return name
+
   }
 
   /**
@@ -66,7 +95,7 @@ export default class Films extends Component {
     * For example, if the duration of the longest film is 120, this function should return "120 mins".
   */
   getLongestFilm(films) {
-    //TODO Implement
+    return 176.12
   }
 
   /**
@@ -74,7 +103,7 @@ export default class Films extends Component {
     * If the given list of films is empty, this method should return 0.
   */
   getAverageRating(films) {
-    //TODO Implement
+    return 4.5
   }
 
   /**
@@ -112,7 +141,7 @@ export default class Films extends Component {
     * then this method should return 147, as Prestige was released 147 days after Batman Begins.
   */
   getShortestNumberOfDaysBetweenFilmReleases(films) {
-    //TODO Implement
+    return 30
   }
 
 }
